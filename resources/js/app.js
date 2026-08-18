@@ -1,4 +1,3 @@
-import './bootstrap';
 import '../css/app.css';
 
 document.querySelectorAll('.task-list[data-reorderable="true"]').forEach((list) => {
