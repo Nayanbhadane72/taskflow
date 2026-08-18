@@ -2,11 +2,7 @@
 
 @section('content')
     <header class="page-header">
-        <div>
-            <p class="eyebrow">Taskflow</p>
-            <h1>Keep work moving.</h1>
-            <p class="lede">A simple list for the things that need doing next.</p>
-        </div>
+        <h1>Taskflow</h1>
         <form class="filter" method="GET" action="{{ route('tasks.index') }}">
             <label for="project">Show tasks</label>
             <select id="project" name="project" onchange="this.form.submit()">

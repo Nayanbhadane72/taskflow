@@ -27,6 +27,10 @@ class TaskManagementTest extends TestCase
             'project_id' => $project->id,
             'priority' => 3,
         ]);
+
+        $task = Task::where('name', 'Third task')->firstOrFail();
+        $this->assertNotNull($task->created_at);
+        $this->assertNotNull($task->updated_at);
     }
 
     public function test_reorder_rewrites_priorities_from_one(): void

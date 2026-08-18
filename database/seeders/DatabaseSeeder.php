@@ -10,20 +10,44 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['Website refresh', 'Operations', 'Personal'] as $name) {
-            $project = Project::factory()->create(['name' => $name]);
+        $projects = [
+            'Website cleanup' => [
+                'Fix login redirect',
+                'Check the mobile menu on Safari',
+                'Send the homepage copy to Maya',
+                'Remove the old contact form',
+            ],
+            'Office admin' => [
+                'Call the printer about the invoice',
+                'Order more envelopes',
+                'Book the room for Friday',
+                'Follow up on the expense report',
+            ],
+            'Things at home' => [
+                'Book dentist appointment',
+                'Replace the hallway light bulb',
+                'Pick up dry cleaning',
+                'Water the plants',
+            ],
+        ];
 
-            Task::factory(4)->sequence(
-                ['priority' => 1],
-                ['priority' => 2],
-                ['priority' => 3],
-                ['priority' => 4],
-            )->for($project)->create();
+        foreach ($projects as $name => $taskNames) {
+            $project = Project::create(['name' => $name]);
+
+            foreach ($taskNames as $priority => $taskName) {
+                Task::create([
+                    'name' => $taskName,
+                    'priority' => $priority + 1,
+                    'project_id' => $project->id,
+                ]);
+            }
         }
 
-        Task::factory(2)->sequence(
-            ['priority' => 1],
-            ['priority' => 2],
-        )->create();
+        foreach (['Buy batteries', 'Reply to Mum'] as $priority => $taskName) {
+            Task::create([
+                'name' => $taskName,
+                'priority' => $priority + 1,
+            ]);
+        }
     }
 }
