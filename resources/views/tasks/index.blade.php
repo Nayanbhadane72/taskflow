@@ -48,7 +48,7 @@
         </div>
 
         @foreach ($sections as $section)
-            @include('tasks._list', [
+            @include('tasks.partials.task-list', [
                 'title' => $section['title'],
                 'projectId' => $section['project_id'],
                 'tasks' => $section['tasks'],
