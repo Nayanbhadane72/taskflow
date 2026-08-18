@@ -94,9 +94,7 @@ input {
     padding: 8px 11px;
 }
 
-.filter select,
-.task-form input,
-.task-form select {
+.filter select {
     width: 100%;
 }
 
@@ -116,9 +114,23 @@ input {
     gap: 10px;
 }
 
-.task-form input,
+.task-form input {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-form .task-name-input {
+    width: auto;
+}
+
+.task-form .task-project-select {
+    flex: 0 1 180px;
+    width: 180px;
+}
+
 .edit-form input {
     flex: 1;
+    min-width: 0;
 }
 
 button {
@@ -140,6 +152,31 @@ button {
 
 .list-heading h2 {
     margin-bottom: 5px;
+}
+
+.scope-section + .scope-section {
+    border-top: 1px solid #edf0f4;
+    margin-top: 28px;
+    padding-top: 24px;
+}
+
+.scope-heading {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.scope-heading h3 {
+    color: #43536b;
+    font-size: .9rem;
+    letter-spacing: .02em;
+    margin: 0;
+}
+
+.scope-count {
+    color: #8b98a9;
+    font-size: .82rem;
 }
 
 .task-count {
@@ -252,6 +289,12 @@ button {
     .edit-form {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    .task-form .task-name-input,
+    .task-form .task-project-select {
+        flex: none;
+        width: 100%;
     }
 
     .filter,

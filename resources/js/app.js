@@ -1,16 +1,14 @@
 import './bootstrap';
 import '../css/app.css';
 
-const list = document.querySelector('.task-list');
-const listWrap = document.querySelector('.task-list-wrap');
-
-if (list && listWrap?.dataset.reorderable === 'true') {
+document.querySelectorAll('.task-list[data-reorderable="true"]').forEach((list) => {
+    const listWrap = list.closest('.task-list-wrap');
     let dragged;
     let previousOrder;
     let dropped = false;
 
     const message = (text, error = false) => {
-        const element = document.querySelector('.reorder-message');
+        const element = listWrap.querySelector('.reorder-message');
         element.textContent = text;
         element.classList.toggle('is-error', error);
     };
@@ -53,10 +51,17 @@ if (list && listWrap?.dataset.reorderable === 'true') {
         dragged = event.target.closest('.task-row');
         previousOrder = [...list.children];
         dropped = false;
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', dragged.dataset.taskId);
         dragged.classList.add('is-dragging');
     });
 
     list.addEventListener('dragover', (event) => {
+        if (!dragged || !list.contains(dragged)) {
+            event.dataTransfer.dropEffect = 'none';
+            return;
+        }
+
         event.preventDefault();
         const target = event.target.closest('.task-row');
 
@@ -69,6 +74,10 @@ if (list && listWrap?.dataset.reorderable === 'true') {
     });
 
     list.addEventListener('drop', (event) => {
+        if (!dragged || !list.contains(dragged)) {
+            return;
+        }
+
         event.preventDefault();
         dropped = true;
         renderPriorities();
@@ -82,4 +91,4 @@ if (list && listWrap?.dataset.reorderable === 'true') {
             list.replaceChildren(...previousOrder);
         }
     });
-}
+});

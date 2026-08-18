@@ -69,6 +69,26 @@ class TaskManagementTest extends TestCase
         );
     }
 
+    public function test_reorder_rewrites_priorities_in_the_unassigned_scope(): void
+    {
+        $tasks = Task::factory(3)->sequence(
+            ['priority' => 1],
+            ['priority' => 2],
+            ['priority' => 3],
+        )->create();
+
+        $this->postJson(route('tasks.reorder'), [
+            'project_id' => null,
+            'task_ids' => $tasks->reverse()->modelKeys(),
+        ])->assertOk();
+
+        $this->assertSame(
+            [1, 2, 3],
+            Task::whereNull('project_id')->orderBy('priority')->pluck('priority')->all()
+        );
+        $this->assertSame($tasks[2]->id, Task::whereNull('project_id')->where('priority', 1)->first()->id);
+    }
+
     public function test_deleting_a_task_closes_the_priority_gap(): void
     {
         $project = Project::factory()->create();
@@ -98,6 +118,13 @@ class TaskManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Included task')
             ->assertDontSee('Excluded task');
+    }
+
+    public function test_junk_project_filter_falls_back_to_all_tasks(): void
+    {
+        $this->get(route('tasks.index', ['project' => 'abc']))
+            ->assertOk()
+            ->assertSee('All tasks');
     }
 
     public function test_moving_a_task_resequences_both_projects(): void

@@ -15,11 +15,21 @@ class TaskController extends Controller
 {
     public function index(TaskIndexRequest $request): View
     {
-        $filter = $request->validated('project');
+        $projects = Project::query()->orderBy('name')->get();
+        $requestedFilter = $request->validated('project');
+        $selectedProject = is_numeric($requestedFilter)
+            ? $projects->firstWhere('id', (int) $requestedFilter)
+            : null;
+        $filter = match (true) {
+            $requestedFilter === 'unassigned' => 'unassigned',
+            $selectedProject !== null => (string) $selectedProject->id,
+            default => 'all',
+        };
+
         $tasks = Task::query()
             ->with('project')
             ->when(
-                is_numeric($filter),
+                $filter !== 'all' && $filter !== 'unassigned',
                 fn ($query) => $query->where('project_id', (int) $filter)
             )
             ->when(
@@ -30,10 +40,33 @@ class TaskController extends Controller
             ->orderBy('id')
             ->get();
 
+        $sections = $filter === 'all'
+            ? $projects->map(fn (Project $project) => [
+                'title' => $project->name,
+                'project_id' => $project->id,
+                'tasks' => $tasks->where('project_id', $project->id),
+            ])->push([
+                'title' => 'Unassigned',
+                'project_id' => null,
+                'tasks' => $tasks->whereNull('project_id'),
+            ])
+            : collect([[
+                'title' => $filter === 'unassigned' ? 'Unassigned' : $selectedProject->name,
+                'project_id' => $filter === 'unassigned' ? null : $selectedProject->id,
+                'tasks' => $tasks,
+            ]]);
+
         return view('tasks.index', [
-            'tasks' => $tasks,
-            'projects' => Project::query()->orderBy('name')->get(),
-            'filter' => $filter ?? 'all',
+            'filter' => $filter,
+            'filterTitle' => $filter === 'all'
+                ? 'All tasks'
+                : ($filter === 'unassigned' ? 'Unassigned' : $selectedProject->name),
+            'filterDescription' => $filter === 'all'
+                ? 'Drag tasks within their section to change priority.'
+                : 'Drag a task to change its priority.',
+            'projects' => $projects,
+            'sections' => $sections,
+            'taskCount' => $tasks->count(),
         ]);
     }
 
