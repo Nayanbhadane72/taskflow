@@ -1,0 +1,270 @@
+:root {
+    color: #253044;
+    background: #f4f6f8;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-synthesis: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.shell {
+    width: min(900px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 64px 0 80px;
+}
+
+.page-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.eyebrow {
+    color: #62748e;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    margin: 0 0 12px;
+    text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    color: #172033;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    letter-spacing: -.05em;
+    line-height: 1;
+    margin-bottom: 14px;
+}
+
+h2 {
+    color: #172033;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+}
+
+.lede,
+.list-heading p {
+    color: #718096;
+    margin-bottom: 0;
+}
+
+.filter {
+    min-width: 190px;
+}
+
+.filter label {
+    color: #62748e;
+    display: block;
+    font-size: .82rem;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+select,
+input {
+    background: #fff;
+    border: 1px solid #d9e0e8;
+    border-radius: 8px;
+    color: #253044;
+    min-height: 42px;
+    padding: 8px 11px;
+}
+
+.filter select,
+.task-form input,
+.task-form select {
+    width: 100%;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #e5eaf0;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(28, 43, 65, .05);
+    margin-top: 18px;
+    padding: 24px;
+}
+
+.task-form,
+.edit-form {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.task-form input,
+.edit-form input {
+    flex: 1;
+}
+
+button {
+    background: #315fce;
+    border: 0;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 650;
+    min-height: 42px;
+    padding: 0 16px;
+}
+
+.list-heading {
+    align-items: start;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.list-heading h2 {
+    margin-bottom: 5px;
+}
+
+.task-count {
+    align-items: center;
+    background: #eef2ff;
+    border-radius: 999px;
+    color: #315fce;
+    display: flex;
+    font-size: .85rem;
+    font-weight: 700;
+    height: 30px;
+    justify-content: center;
+    min-width: 30px;
+}
+
+.task-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.task-row {
+    align-items: center;
+    border-top: 1px solid #edf0f4;
+    display: flex;
+    gap: 12px;
+    min-height: 68px;
+    padding: 11px 0;
+}
+
+.task-row[draggable="true"] {
+    cursor: grab;
+}
+
+.task-row.is-dragging {
+    opacity: .45;
+}
+
+.drag-handle {
+    color: #a3afbf;
+    font-size: 1.1rem;
+    letter-spacing: -2px;
+    width: 12px;
+}
+
+.priority {
+    color: #62748e;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    width: 20px;
+}
+
+.edit-form {
+    flex: 1;
+}
+
+.edit-form select {
+    max-width: 155px;
+}
+
+.button-muted {
+    background: #edf1f6;
+    color: #43536b;
+    min-height: 36px;
+    padding: 0 12px;
+}
+
+.icon-button {
+    background: transparent;
+    color: #9aa7b8;
+    font-size: 1.45rem;
+    min-height: 36px;
+    padding: 0 5px;
+}
+
+.empty-state {
+    border-top: 1px solid #edf0f4;
+    color: #718096;
+    padding: 25px 0 8px;
+}
+
+.flash {
+    background: #e9f7ef;
+    border: 1px solid #b9e4c9;
+    border-radius: 8px;
+    color: #21633b;
+    margin-bottom: 18px;
+    padding: 12px 14px;
+}
+
+.flash-error,
+.reorder-message.is-error {
+    color: #a63838;
+}
+
+.reorder-message {
+    color: #37764f;
+    font-size: .88rem;
+    min-height: 20px;
+    margin: 14px 0 0;
+}
+
+@media (max-width: 680px) {
+    .shell {
+        padding-top: 35px;
+    }
+
+    .page-header,
+    .task-form,
+    .edit-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .filter,
+    .edit-form select {
+        max-width: none;
+        width: 100%;
+    }
+
+    .task-row {
+        align-items: start;
+    }
+
+    .priority {
+        padding-top: 11px;
+    }
+}
