@@ -5,7 +5,6 @@ namespace App\Actions;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class TaskOrdering
 {
@@ -21,23 +20,19 @@ class TaskOrdering
     public function update(Task $task, array $attributes): Task
     {
         return DB::transaction(function () use ($task, $attributes) {
-            $oldProjectId = $task->project_id === null ? null : (int) $task->project_id;
-            $newProjectId = isset($attributes['project_id']) && $attributes['project_id'] !== null
-                ? (int) $attributes['project_id']
-                : null;
-            $attributes['project_id'] = $newProjectId;
+            $oldProjectId = $task->project_id;
 
             $task->fill($attributes);
 
-            if ($oldProjectId !== $newProjectId) {
-                $task->priority = $this->nextPriority($newProjectId);
+            if ($oldProjectId !== $task->project_id) {
+                $task->priority = $this->nextPriority($task->project_id);
             }
 
             $task->save();
 
-            if ($oldProjectId !== $newProjectId) {
+            if ($oldProjectId !== $task->project_id) {
                 $this->resequence($oldProjectId);
-                $this->resequence($newProjectId);
+                $this->resequence($task->project_id);
             }
 
             return $task;
@@ -56,24 +51,19 @@ class TaskOrdering
     public function reorder(?int $projectId, array $taskIds): void
     {
         DB::transaction(function () use ($projectId, $taskIds) {
-            $tasks = $this->scope($projectId)->orderBy('priority')->get();
-            $expected = $tasks->modelKeys();
-            $submitted = array_values(array_map('intval', $taskIds));
-            sort($expected);
-            $sortedSubmitted = $submitted;
-            sort($sortedSubmitted);
+            $tasks = $this->scope($projectId)->get();
+            $priority = 1;
 
-            if ($expected !== $sortedSubmitted) {
-                throw ValidationException::withMessages([
-                    'task_ids' => 'The task list is out of date. Refresh and try again.',
-                ]);
+            foreach ($taskIds as $taskId) {
+                $task = $tasks->firstWhere('id', $taskId);
+
+                if ($task !== null) {
+                    $task->update(['priority' => $priority]);
+                    $priority++;
+                }
             }
 
-            $byId = $tasks->keyBy('id');
-
-            foreach ($submitted as $priority => $taskId) {
-                $byId->get($taskId)->update(['priority' => $priority + 1]);
-            }
+            $this->resequence($projectId);
         });
     }
 
@@ -95,11 +85,8 @@ class TaskOrdering
 
     private function scope(?int $projectId): Builder
     {
-        return Task::query()
-            ->when(
-                $projectId === null,
-                fn (Builder $query) => $query->whereNull('project_id'),
-                fn (Builder $query) => $query->where('project_id', $projectId)
-            );
+        return $projectId === null
+            ? Task::whereNull('project_id')
+            : Task::where('project_id', $projectId);
     }
 }

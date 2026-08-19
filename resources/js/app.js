@@ -3,8 +3,6 @@ import '../css/app.css';
 document.querySelectorAll('.task-list[data-reorderable="true"]').forEach((list) => {
     const listWrap = list.closest('.task-list-wrap');
     let dragged;
-    let previousOrder;
-    let dropped = false;
 
     const message = (text, error = false) => {
         const element = listWrap.querySelector('.reorder-message');
@@ -39,17 +37,14 @@ document.querySelectorAll('.task-list[data-reorderable="true"]').forEach((list) 
             }
 
             message('Order saved.');
-        } catch (error) {
-            list.replaceChildren(...previousOrder);
-            renderPriorities();
-            message(error.message, true);
+        } catch {
+            message('Order could not be saved. Reloading.', true);
+            window.location.reload();
         }
     };
 
     list.addEventListener('dragstart', (event) => {
         dragged = event.target.closest('.task-row');
-        previousOrder = [...list.children];
-        dropped = false;
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.setData('text/plain', dragged.dataset.taskId);
         dragged.classList.add('is-dragging');
@@ -78,16 +73,12 @@ document.querySelectorAll('.task-list[data-reorderable="true"]').forEach((list) 
         }
 
         event.preventDefault();
-        dropped = true;
         renderPriorities();
         saveOrder();
     });
 
     list.addEventListener('dragend', () => {
         dragged?.classList.remove('is-dragging');
-
-        if (!dropped) {
-            list.replaceChildren(...previousOrder);
-        }
+        dragged = null;
     });
 });

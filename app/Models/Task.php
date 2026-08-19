@@ -14,7 +14,10 @@ class Task extends Model
 
     protected function casts(): array
     {
-        return ['priority' => 'integer'];
+        return [
+            'priority' => 'integer',
+            'project_id' => 'integer',
+        ];
     }
 
     public function project(): BelongsTo

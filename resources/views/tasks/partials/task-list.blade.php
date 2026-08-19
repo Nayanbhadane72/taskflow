@@ -1,7 +1,6 @@
 <section class="scope-section">
     <div class="scope-heading">
         <h3>{{ $title }}</h3>
-        <span class="scope-count">{{ $tasks->count() }}</span>
     </div>
 
     <div class="task-list-wrap">

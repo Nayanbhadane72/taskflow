@@ -54,22 +54,35 @@ class TaskManagementTest extends TestCase
         $this->assertSame($tasks[2]->id, Task::where('priority', 1)->first()->id);
     }
 
-    public function test_reorder_rejects_a_mismatched_id_set(): void
+    public function test_reorder_ignores_tasks_from_another_project(): void
     {
         $project = Project::factory()->create();
+        $otherProject = Project::factory()->create();
         $tasks = Task::factory(2)->sequence(
             ['priority' => 1],
             ['priority' => 2],
         )->for($project)->create();
+        $otherTask = Task::factory()->create([
+            'project_id' => $otherProject->id,
+            'priority' => 1,
+        ]);
 
         $this->postJson(route('tasks.reorder'), [
             'project_id' => $project->id,
-            'task_ids' => [$tasks[0]->id],
-        ])->assertStatus(422);
+            'task_ids' => [$tasks[1]->id, $otherTask->id, $tasks[0]->id],
+        ])->assertOk();
 
         $this->assertSame(
             [1, 2],
             Task::where('project_id', $project->id)->orderBy('priority')->pluck('priority')->all()
+        );
+        $this->assertDatabaseHas('tasks', [
+            'id' => $otherTask->id,
+            'priority' => 1,
+        ]);
+        $this->assertSame(
+            $tasks[1]->id,
+            Task::where('project_id', $project->id)->where('priority', 1)->first()->id
         );
     }
 

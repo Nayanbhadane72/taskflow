@@ -132,9 +132,6 @@ button {
 }
 
 .list-heading {
-    align-items: start;
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 18px;
 }
 
@@ -149,9 +146,6 @@ button {
 }
 
 .scope-heading {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 10px;
 }
 
@@ -159,17 +153,6 @@ button {
     color: #3f484e;
     font-size: .9rem;
     margin: 0;
-}
-
-.scope-count {
-    color: #778087;
-    font-size: .82rem;
-}
-
-.task-count {
-    color: #667078;
-    font-size: .9rem;
-    font-weight: 600;
 }
 
 .task-list {
