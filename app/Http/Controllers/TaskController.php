@@ -8,68 +8,34 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class TaskController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $projects = Project::query()->orderBy('name')->get();
-        $requestedFilter = request()->query('project');
-        $filter = 'all';
-        $selectedProject = null;
+        $requestedFilter = $request->query('project', 'all');
+        $selectedProject = is_numeric($requestedFilter)
+            ? $projects->firstWhere('id', (int) $requestedFilter)
+            : null;
 
         if ($requestedFilter === 'unassigned') {
             $filter = 'unassigned';
-        } elseif (is_numeric($requestedFilter)) {
-            $selectedProject = $projects->firstWhere('id', (int) $requestedFilter);
-
-            if ($selectedProject !== null) {
-                $filter = (string) $selectedProject->id;
-            }
-        }
-
-        $tasksQuery = Task::query()
-            ->orderBy('priority')
-            ->orderBy('id');
-
-        if ($filter === 'unassigned') {
-            $tasksQuery->whereNull('project_id');
-        } elseif ($filter !== 'all') {
-            $tasksQuery->where('project_id', (int) $filter);
-        }
-
-        $tasks = $tasksQuery->get();
-        $sections = [];
-
-        if ($filter === 'all') {
-            foreach ($projects as $project) {
-                $sections[] = [
-                    'title' => $project->name,
-                    'project_id' => $project->id,
-                    'tasks' => $tasks->where('project_id', $project->id),
-                ];
-            }
-
-            $sections[] = [
-                'title' => 'Unassigned',
-                'project_id' => null,
-                'tasks' => $tasks->whereNull('project_id'),
-            ];
+            $sections = [$this->section('Unassigned', null)];
+        } elseif ($selectedProject !== null) {
+            $filter = (string) $selectedProject->id;
+            $sections = [$this->section($selectedProject->name, $selectedProject->id)];
         } else {
-            $sectionTitle = 'Unassigned';
-            $sectionProjectId = null;
+            $filter = 'all';
+            $sections = [];
 
-            if ($filter !== 'unassigned') {
-                $sectionTitle = $selectedProject->name;
-                $sectionProjectId = $selectedProject->id;
+            foreach ($projects as $project) {
+                $sections[] = $this->section($project->name, $project->id);
             }
 
-            $sections[] = [
-                'title' => $sectionTitle,
-                'project_id' => $sectionProjectId,
-                'tasks' => $tasks,
-            ];
+            $sections[] = $this->section('Unassigned', null);
         }
 
         return view('tasks.index', [
@@ -77,6 +43,25 @@ class TaskController extends Controller
             'projects' => $projects,
             'sections' => $sections,
         ]);
+    }
+
+    private function section(string $title, ?int $projectId): array
+    {
+        $tasks = Task::query()
+            ->orderBy('priority')
+            ->orderBy('id');
+
+        if ($projectId === null) {
+            $tasks->whereNull('project_id');
+        } else {
+            $tasks->where('project_id', $projectId);
+        }
+
+        return [
+            'title' => $title,
+            'project_id' => $projectId,
+            'tasks' => $tasks->get(),
+        ];
     }
 
     public function store(StoreTaskRequest $request, TaskOrdering $ordering): RedirectResponse

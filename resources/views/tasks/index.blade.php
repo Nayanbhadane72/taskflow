@@ -37,16 +37,8 @@
     <section class="card task-card">
         <div class="list-heading">
             <div>
-                @if ($filter === 'all')
-                    <h2>All tasks</h2>
-                    <p>Drag tasks within their section to change priority.</p>
-                @elseif ($filter === 'unassigned')
-                    <h2>Unassigned</h2>
-                    <p>Drag a task to change its priority.</p>
-                @else
-                    <h2>{{ $sections[0]['title'] }}</h2>
-                    <p>Drag a task to change its priority.</p>
-                @endif
+                <h2>{{ count($sections) > 1 ? 'All tasks' : $sections[0]['title'] }}</h2>
+                <p>Drag tasks within their section to change priority.</p>
             </div>
         </div>
 
