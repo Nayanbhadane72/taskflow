@@ -20,9 +20,22 @@ php artisan serve
 
 Open http://127.0.0.1:8000.
 
-On Windows, run `setup.bat` in Command Prompt or PowerShell instead. Git Bash and WSL can use `./setup.sh`.
+If MySQL is not available, run `./setup.sh --sqlite`. MySQL is the normal database for this app and the manual setup below shows how to configure it.
 
-If MySQL is not available, run `setup.bat --sqlite` on Windows or `./setup.sh --sqlite` elsewhere. MySQL is the normal database for this app and the manual setup below shows how to configure it.
+## Windows
+
+Install PHP 8.3, Composer and Node.js so that `php`, `composer` and `npm` work in a new terminal. A bundle such as Laragon or XAMPP gives you PHP and MySQL together; if you use one, add its `php` folder to the PATH environment variable. Make sure MySQL is running, then in Command Prompt or PowerShell:
+
+```bat
+git clone https://github.com/Nayanbhadane72/taskflow.git
+cd taskflow
+setup.bat
+php artisan serve
+```
+
+Open http://127.0.0.1:8000.
+
+Use `setup.bat --sqlite` if you do not have MySQL. If the `mysql` command is not on the PATH, create the `taskflow` database yourself (phpMyAdmin or MySQL Workbench) and run `setup.bat` again. Git Bash and WSL can run `./setup.sh` instead, and the manual steps below work the same on Windows apart from using `copy .env.example .env` in place of `cp`.
 
 ## Manual setup
 
