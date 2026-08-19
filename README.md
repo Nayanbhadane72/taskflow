@@ -46,6 +46,7 @@ Use `setup.bat --sqlite` if you do not have MySQL.
 - `cd taskflow` fails: you are already in the project folder, so skip that line.
 - A PHP extension is missing: in `C:\php\php.ini` remove the `;` in front of `extension=pdo_mysql`, `extension=mbstring`, `extension=curl`, `extension=zip` and `extension=intl`.
 - `mysql` is not recognised: create an empty `taskflow` database with phpMyAdmin or MySQL Workbench and run `setup.bat` again, or use `setup.bat --sqlite`.
+- `Access denied for user ... (using password: YES)`: the `DB_USERNAME` or `DB_PASSWORD` in `.env` does not match MySQL. With Laragon, use `root` and an empty password, run `php artisan config:clear`, and run setup again.
 
 Git Bash and WSL can run `./setup.sh` instead, and the manual steps below work the same on Windows apart from using `copy .env.example .env` in place of `cp`.
 
@@ -59,14 +60,20 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Set the MySQL connection in `.env`. For a local install, create the database and user:
+Set the MySQL connection in `.env`. The committed `.env.example` uses `root` with an empty password, which matches the usual Laragon and XAMPP setup. If you prefer a dedicated user, create the database and run the optional user setup:
 
 ```sql
 CREATE DATABASE taskflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+```sql
+-- Optional dedicated-user setup
 CREATE USER 'taskflow'@'localhost' IDENTIFIED BY 'taskflow';
 GRANT ALL PRIVILEGES ON taskflow.* TO 'taskflow'@'localhost';
 FLUSH PRIVILEGES;
 ```
+
+Set `DB_USERNAME` and `DB_PASSWORD` in `.env` to match that user.
 
 Then run the migrations and seed demo data:
 
