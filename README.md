@@ -24,7 +24,9 @@ If MySQL is not available, run `./setup.sh --sqlite`. MySQL is the normal databa
 
 ## Windows
 
-Install PHP 8.3, Composer and Node.js so that `php`, `composer` and `npm` work in a new terminal. A bundle such as Laragon or XAMPP gives you PHP and MySQL together; if you use one, add its `php` folder to the PATH environment variable. Make sure MySQL is running, then in Command Prompt or PowerShell:
+You need PHP 8.3, Composer and Node.js available in the terminal. The quickest way to get all of them plus MySQL is Laragon (https://laragon.org/download/, the full build); its own terminal already has everything on the PATH. Otherwise install PHP from https://windows.php.net/download (the non thread safe x64 zip, extracted to `C:\php` and added to the PATH), Composer from https://getcomposer.org/Composer-Setup.exe and Node 20 from https://nodejs.org.
+
+With MySQL running, in Command Prompt or PowerShell:
 
 ```bat
 git clone https://github.com/Nayanbhadane72/taskflow.git
@@ -35,7 +37,17 @@ php artisan serve
 
 Open http://127.0.0.1:8000.
 
-Use `setup.bat --sqlite` if you do not have MySQL. If the `mysql` command is not on the PATH, create the `taskflow` database yourself (phpMyAdmin or MySQL Workbench) and run `setup.bat` again. Git Bash and WSL can run `./setup.sh` instead, and the manual steps below work the same on Windows apart from using `copy .env.example .env` in place of `cp`.
+Use `setup.bat --sqlite` if you do not have MySQL.
+
+### If something goes wrong
+
+- `php` is not recognised: PHP is not on the PATH. Check `php -v` in a new terminal, and remember PATH changes only apply to terminals opened afterwards. With Laragon, use the Laragon terminal.
+- `setup.bat` is not recognised in PowerShell: run it as `.\setup.bat`.
+- `cd taskflow` fails: you are already in the project folder, so skip that line.
+- A PHP extension is missing: in `C:\php\php.ini` remove the `;` in front of `extension=pdo_mysql`, `extension=mbstring`, `extension=curl`, `extension=zip` and `extension=intl`.
+- `mysql` is not recognised: create an empty `taskflow` database with phpMyAdmin or MySQL Workbench and run `setup.bat` again, or use `setup.bat --sqlite`.
+
+Git Bash and WSL can run `./setup.sh` instead, and the manual steps below work the same on Windows apart from using `copy .env.example .env` in place of `cp`.
 
 ## Manual setup
 
