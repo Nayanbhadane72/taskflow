@@ -57,9 +57,14 @@ env_value() {
     value="$(grep -E "^${key}=" .env | tail -n 1 | cut -d '=' -f 2- || true)"
     value="${value%$'\r'}"
 
-    if [[ "$value" == '"'*'"' || "$value" == "'"*"$" ]]; then
-        value="${value:1:${#value}-2}"
-    fi
+    case "$value" in
+        \"*\")
+            value="${value:1:${#value}-2}"
+            ;;
+        \'*\')
+            value="${value:1:${#value}-2}"
+            ;;
+    esac
 
     printf '%s' "$value"
 }
