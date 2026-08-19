@@ -9,9 +9,22 @@ Taskflow is a small Laravel task list. Tasks belong to an optional project and h
 - MySQL 8
 - Node.js 20 and npm
 
-## Setup
+## Quick start
 
-Clone the repository and install PHP dependencies:
+```sh
+git clone https://github.com/Nayanbhadane72/taskflow.git
+cd taskflow
+./setup.sh
+php artisan serve
+```
+
+Open http://127.0.0.1:8000.
+
+If MySQL is not available, run `./setup.sh --sqlite` instead. MySQL is the normal database for this app and the manual setup below shows how to configure it.
+
+## Manual setup
+
+Install the PHP dependencies and create the environment file:
 
 ```sh
 composer install
@@ -42,7 +55,7 @@ Start the application with:
 php artisan serve
 ```
 
-Open `http://127.0.0.1:8000`.
+Open http://127.0.0.1:8000.
 
 ## Tests
 
@@ -50,7 +63,7 @@ The test suite uses an in-memory SQLite database:
 
 ```sh
 php artisan test
-./vendor/bin/pint
+./vendor/bin/pint --test
 ```
 
 ## Deployment

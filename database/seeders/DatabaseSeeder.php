@@ -32,22 +32,24 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($projects as $name => $taskNames) {
-            $project = Project::create(['name' => $name]);
+            $project = Project::firstOrCreate(['name' => $name]);
 
             foreach ($taskNames as $priority => $taskName) {
-                Task::create([
-                    'name' => $taskName,
-                    'priority' => $priority + 1,
-                    'project_id' => $project->id,
-                ]);
+                Task::firstOrCreate(
+                    [
+                        'name' => $taskName,
+                        'project_id' => $project->id,
+                    ],
+                    ['priority' => $priority + 1]
+                );
             }
         }
 
         foreach (['Buy batteries', 'Reply to Mum'] as $priority => $taskName) {
-            Task::create([
-                'name' => $taskName,
-                'priority' => $priority + 1,
-            ]);
+            Task::firstOrCreate(
+                ['name' => $taskName, 'project_id' => null],
+                ['priority' => $priority + 1]
+            );
         }
     }
 }
