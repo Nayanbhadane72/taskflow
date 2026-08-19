@@ -20,7 +20,9 @@ php artisan serve
 
 Open http://127.0.0.1:8000.
 
-If MySQL is not available, run `./setup.sh --sqlite` instead. MySQL is the normal database for this app and the manual setup below shows how to configure it.
+On Windows, run `setup.bat` in Command Prompt or PowerShell instead. Git Bash and WSL can use `./setup.sh`.
+
+If MySQL is not available, run `setup.bat --sqlite` on Windows or `./setup.sh --sqlite` elsewhere. MySQL is the normal database for this app and the manual setup below shows how to configure it.
 
 ## Manual setup
 
